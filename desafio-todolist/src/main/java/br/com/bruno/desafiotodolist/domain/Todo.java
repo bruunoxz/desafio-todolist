@@ -18,5 +18,17 @@ public class Todo {
     private String id;
     private String name;
     private String description;
-    private TodoPriority priority;
+    private String priority;
+
+    public Todo(String name, String description, String priority) {
+        this.name = name;
+        this.description = description;
+        this.priority = priority;
+    }
+
+    public Todo(RequestTodo requestTodo){
+        this.name = requestTodo.name();
+        this.description = requestTodo.description();
+        this.priority = requestTodo.priority();
+    }
 }
