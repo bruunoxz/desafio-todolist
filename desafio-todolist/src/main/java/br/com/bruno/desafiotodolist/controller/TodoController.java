@@ -2,7 +2,10 @@ package br.com.bruno.desafiotodolist.controller;
 
 import br.com.bruno.desafiotodolist.domain.RequestTodo;
 import br.com.bruno.desafiotodolist.domain.Todo;
+import br.com.bruno.desafiotodolist.infra.RequestsExceptionHandler;
 import br.com.bruno.desafiotodolist.repository.TodoRepository;
+import br.com.bruno.desafiotodolist.service.TodoService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,46 +19,27 @@ import java.util.Optional;
 @RequestMapping("/todos")
 public class TodoController {
     @Autowired
-    private TodoRepository todoRepository;
+    private TodoService todoService;
 
     @GetMapping
     public ResponseEntity getAllTodos(){
-        var allTodos = todoRepository.findAll();
-        return ResponseEntity.ok(allTodos);
+        return ResponseEntity.ok(todoService.list());
     }
 
     @PostMapping
     public ResponseEntity registerTodo(@RequestBody @Valid RequestTodo data){
-        Todo newTodo = new Todo(data);
-        todoRepository.save(newTodo);
-        return ResponseEntity.ok(newTodo);
+        return ResponseEntity.ok(todoService.create(data));
     }
 
     @PutMapping
     public ResponseEntity updateTodo(@RequestBody @Valid RequestTodo data){
-        Optional<Todo> optionalTodo = todoRepository.findById(data.id());
-        if(optionalTodo.isPresent()){
-            Todo todo = optionalTodo.get();
-            todo.setName(data.name());
-            todo.setDescription(data.description());
-            todo.setPriority(data.priority());
-            todoRepository.save(todo);
-            return ResponseEntity.ok(todo);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(todoService.update(data));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteTodo(@PathVariable("id") String id){
-        Optional<Todo> optionalTodo = todoRepository.findById(id);
-        if(optionalTodo.isPresent()){
-            Todo todo = optionalTodo.get();
-            todoRepository.delete(todo);
-            return ResponseEntity.noContent().build();
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        todoService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

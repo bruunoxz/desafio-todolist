@@ -18,9 +18,9 @@ public class Todo {
     private String id;
     private String name;
     private String description;
-    private String priority;
+    private int priority;
 
-    public Todo(String name, String description, String priority) {
+    public Todo(String name, String description, int priority) {
         this.name = name;
         this.description = description;
         this.priority = priority;
